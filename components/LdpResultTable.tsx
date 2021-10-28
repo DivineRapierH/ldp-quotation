@@ -3,7 +3,11 @@ import React from "react";
 import {Table, Typography} from "antd";
 const { Text } = Typography;
 
-export interface TableValue {
+export interface Props {
+  resultValues: TableValue
+}
+
+interface TableValue {
   landShippingFee: string,
   oceanShippingFee: string,
   duty: string,
@@ -12,7 +16,7 @@ export interface TableValue {
   exchangeRate: string, // $1 to ¥?
 }
 
-const LdpResultTable : React.FC<TableValue> = (resultValues: TableValue) => {
+const LdpResultTable = ({resultValues} : Props) => {
   const columns = [
     {
       title: '名称',
@@ -38,8 +42,6 @@ const LdpResultTable : React.FC<TableValue> = (resultValues: TableValue) => {
       render: (costPerUnitInCNY: number) => <p>{`¥ ${costPerUnitInCNY}`}</p>
     }
   ];
-  console.log(resultValues);
-  console.log(resultValues.quantity);
 
   const calcCostPerUnit = (totalCost: string): string =>
     bigDecimal.divide(totalCost, resultValues.quantity, 5);
@@ -85,6 +87,7 @@ const LdpResultTable : React.FC<TableValue> = (resultValues: TableValue) => {
         dataSource={tableData}
         pagination={false}
         bordered
+        size="small"
         summary={pageData => {
           let totalFee = '0';
           let totalCostPerUnit = '0';

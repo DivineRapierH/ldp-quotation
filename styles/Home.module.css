@@ -9,11 +9,11 @@
 }
 
 .main {
-  padding: 5rem 0;
-  /*flex: auto;*/
+  padding: 2rem 0;
+  flex: auto;
   /*display: flex;*/
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
   width: 80%;
 }
@@ -48,7 +48,7 @@
 .title {
   margin-bottom: 1.5rem;
   line-height: 1.15;
-  font-size: 4rem;
+  font-size: 2rem;
 }
 
 .title,

@@ -1,25 +1,14 @@
 import type {NextPage} from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
-import {Button, Row, Col, Form, Input, Divider} from 'antd';
+import {Button, Row, Col, Form, Input, Divider, Card} from 'antd';
 import styles from '../styles/Home.module.css'
-import LdpForm from "../components/LdpForm";
+import LdpForm, {LdpFormResult} from "../components/LdpForm";
 import LdpResultTable from "../components/LdpResultTable";
 import {useState} from "react";
 import calcLdp from "../utils/LdpResultCalculator";
 import useStateCallback from "../utils/useStateCallback";
-
-interface LdpFormResult {
-  quantity: string;
-  exchangeRate: string;
-  clearancePrice: string;
-  taxRate: string;
-  trucking: string;
-  volume: string;
-  type: string;
-  estimatedFee: string;
-}
-
+import bigDecimal from "js-big-decimal";
 
 const Home: NextPage = () => {
 
@@ -31,7 +20,19 @@ const Home: NextPage = () => {
     quantity: '0',
     exchangeRate: '0'
   });
-  const [isResultCalculated, setIsResultCalculated] = useState(false);
+  const [cardValue, setCardValue] = useState({
+    productName: '',
+    quantity: '0',
+    numPerBox: '0',
+    length: '0',
+    width: '0',
+    height: '0',
+    totalVolume: '0',
+    volumeWithoutContainer: '0',
+    containerNum: '0',
+  });
+  const [isInfoCardLoading, setInfoCardLoading] = useState(true);
+  const [isResultCalculated, setIsResultCalculated] = useStateCallback(false);
 
   const truckingOptions = [
     {name: 'AVALON', fee: 1839.5},
@@ -47,21 +48,43 @@ const Home: NextPage = () => {
   ];
 
   const onFinish = (values: LdpFormResult) => {
+    console.log(values)
+    const boxVolume = bigDecimal.divide(
+      bigDecimal.multiply(bigDecimal.multiply(values.length, values.width), values.height),
+      1000000,
+      10
+    );
+    const boxNum = bigDecimal.ceil(bigDecimal.divide(values.quantity, values.numPerBox, 1));
+    const totalVolume = bigDecimal.multiply(boxVolume, boxNum);
+
     const {
       landShippingFee,
       oceanShippingFee,
       duty,
-      destinationPortFee
+      destinationPortFee,
+      volumeWithoutContainer,
+      containerNum
     } = calcLdp({
       quantity: values.quantity,
       exchangeRate: values.exchangeRate,
       clearancePrice: values.clearancePrice,
       taxRate: values.taxRate,
       trucking: `${truckingOptions.filter(opt => opt.name === values.trucking)[0].fee}`,
-      volume: values.volume,
-      type: values.type,
-      estimatedFee: values.estimatedFee
+      volume: totalVolume,
+      estimatedFeePerUnit: values.estimatedFeePerUnit,
+      estimatedFeePerContainer: values.estimatedFeePerContainer,
     });
+    setCardValue({
+      productName: values.productName,
+      quantity: values.quantity,
+      numPerBox: values.numPerBox,
+      length: values.length,
+      width: values.width,
+      height: values.height,
+      totalVolume,
+      volumeWithoutContainer,
+      containerNum,
+    })
     setFormValue({
       landShippingFee: landShippingFee,
       oceanShippingFee: oceanShippingFee,
@@ -69,7 +92,7 @@ const Home: NextPage = () => {
       destinationPortFee: destinationPortFee,
       quantity: values.quantity,
       exchangeRate: values.exchangeRate,
-    }, () => setIsResultCalculated(true));
+    }, () => setIsResultCalculated(true, () => setInfoCardLoading(false)));
   };
 
   const ResTable = () => {
@@ -87,20 +110,33 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        {/*<h1 className={styles.title}>*/}
-        {/*  海运费计算器*/}
-        {/*</h1>*/}
+        <h1 className={styles.title}>
+          海运费计算器
+        </h1>
         <LdpForm
           truckingOptions={truckingOptions}
-          onFormUnsavedChange={() => setIsResultCalculated(false)}
+          onFormUnsavedChange={() => setIsResultCalculated(false, () => setInfoCardLoading(true))}
           onFinish={onFinish}
         />
         {isResultCalculated && (
           <>
             <Divider />
-            <LdpResultTable
-              {...formValue}
-            />
+            <Row gutter={24}>
+              <Col span={8}>
+                <Card title={cardValue.productName} loading={isInfoCardLoading}>
+                  <p>{cardValue.numPerBox}件装</p>
+                  <p>纸箱尺寸 {cardValue.length}cm * {cardValue.width}cm * {cardValue.height}cm</p>
+                  <p>预估总体积 {bigDecimal.round(cardValue.totalVolume, 4)}立方米</p>
+                  <p>散货体积 {bigDecimal.round(cardValue.volumeWithoutContainer, 4)}立方米，整柜数量 {cardValue.containerNum}个</p>
+                </Card>
+              </Col>
+              <Col span={16}>
+                <LdpResultTable
+                  resultValues={formValue}
+                />
+              </Col>
+            </Row>
+
           </>
         )}
 

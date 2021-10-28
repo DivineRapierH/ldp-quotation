@@ -6,19 +6,35 @@ interface TruckingOptions {
   fee: number,
 }
 
+export interface LdpFormResult {
+  productName: string,
+  quantity: string,
+  exchangeRate: string,
+  clearancePrice: string,
+  taxRate: string,
+  trucking: string,
+  length: string,
+  width: string,
+  height: string,
+  numPerBox: string,
+  estimatedFeePerUnit: string,
+  estimatedFeePerContainer: string,
+}
+
 export default function LdpForm(
   {
     onFinish,
     truckingOptions,
     onFormUnsavedChange
   }: {
-    onFinish: (values: any) => void,
+    onFinish: (values: LdpFormResult) => void,
     truckingOptions: Array<TruckingOptions>,
     onFormUnsavedChange: () => void
   }) {
 
   const [form] = Form.useForm();
 
+  // not used
   const currencySelector = (
     <Form.Item name="currencySelector" noStyle>
       <Select style={{width: 70}}>
@@ -152,49 +168,106 @@ export default function LdpForm(
         </Col>
       </Row>
       <Row gutter={24}>
-        <Col span={8} key="type">
+        <Col span={8} key="length">
           <Form.Item
-            name="type"
-            label="散柜/整柜"
+            name="length"
+            label="预估箱子长度"
             rules={[
               {
                 required: true,
-                message: '请选择!',
-              },
-            ]}
-          >
-            <Select>
-              <Select.Option value="bulk">散柜</Select.Option>
-              <Select.Option value="whole">整柜</Select.Option>
-            </Select>
-          </Form.Item>
-        </Col>
-        <Col span={8} key="volume">
-          <Form.Item
-            name="volume"
-            label="散货立方数"
-            rules={[
-              {
-                required: true,
-                message: '请输入立方数!',
+                message: '请输入预估长度!',
               },
               {
-                pattern: /^\d+(\.\d+)?$/,
-                message: '请输入正确的立方数',
+                pattern: /^[0-9]+(.[0-9]+)?$/,
+                message: '请输入正确的长度！',
               }
             ]}
           >
-            <Input type="number" step=".01"/>
+            <Input type="number" step=".01" suffix="cm"/>
           </Form.Item>
         </Col>
-        <Col span={8} key="estimatedFee">
+        <Col span={8} key="width">
           <Form.Item
-            name="estimatedFee"
-            label="预计海运费"
+            name="width"
+            label="预估箱子宽度"
             rules={[
               {
                 required: true,
-                message: '请输入预计海运费!',
+                message: '请输入预估宽度!',
+              },
+              {
+                pattern: /^[0-9]+(.[0-9]+)?$/,
+                message: '请输入正确的宽度！',
+              }
+            ]}
+          >
+            <Input type="number" step=".01" suffix="cm"/>
+          </Form.Item>
+        </Col>
+        <Col span={8} key="height">
+          <Form.Item
+            name="height"
+            label="预估箱子高度"
+            rules={[
+              {
+                required: true,
+                message: '请输入预估高度!',
+              },
+              {
+                pattern: /^[0-9]+(.[0-9]+)?$/,
+                message: '请输入正确的长度！',
+              }
+            ]}
+          >
+            <Input type="number" step=".01" suffix="cm"/>
+          </Form.Item>
+        </Col>
+      </Row>
+      <Row gutter={24}>
+        <Col span={8} key="numPerBox">
+          <Form.Item
+            name="numPerBox"
+            label="每箱件数"
+            rules={[
+              {
+                required: true,
+                message: '请输入每箱件数!',
+              },
+              {
+                pattern: /^[1-9]\d*$/,
+                message: '请输入正确的每箱件数!',
+              },
+            ]}
+          >
+            <Input type="number" step="1" suffix="件/箱"/>
+          </Form.Item>
+        </Col>
+        <Col span={8} key="estimatedFeePerUnit">
+          <Form.Item
+            name="estimatedFeePerUnit"
+            label="预计散货海运费"
+            rules={[
+              {
+                required: true,
+                message: '请输入预计散货海运费!',
+              },
+              {
+                pattern: /^[0-9]+(.[0-9]+)?$/,
+                message: '请输入正确的价格！',
+              }
+            ]}
+          >
+            <Input type="number" step=".01" prefix="$"/>
+          </Form.Item>
+        </Col>
+        <Col span={8} key="estimatedFeePerContainer">
+          <Form.Item
+            name="estimatedFeePerContainer"
+            label="预计整柜海运费"
+            rules={[
+              {
+                required: true,
+                message: '请输入预计整柜海运费!',
               },
               {
                 pattern: /^[0-9]+(.[0-9]+)?$/,
