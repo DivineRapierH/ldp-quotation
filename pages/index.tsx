@@ -126,8 +126,8 @@ const Home: NextPage = () => {
                 <Card title={cardValue.productName} loading={isInfoCardLoading}>
                   <p>{cardValue.numPerBox}件装</p>
                   <p>纸箱尺寸 {cardValue.length}cm * {cardValue.width}cm * {cardValue.height}cm</p>
-                  <p>预估总体积 {bigDecimal.round(cardValue.totalVolume, 4)}立方米</p>
-                  <p>散货体积 {bigDecimal.round(cardValue.volumeWithoutContainer, 4)}立方米，整柜数量 {cardValue.containerNum}个</p>
+                  <p>预估总体积 {bigDecimal.round(cardValue.totalVolume, 2)}立方米</p>
+                  <p>散货体积 {bigDecimal.round(cardValue.volumeWithoutContainer, 2)}立方米，整柜数量 {cardValue.containerNum}个</p>
                 </Card>
               </Col>
               <Col span={16}>

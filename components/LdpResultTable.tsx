@@ -16,6 +16,14 @@ interface TableValue {
   exchangeRate: string, // $1 to ¥?
 }
 
+interface TableDisplayValue {
+  key: string,
+  feeName: string,
+  fee: string,
+  costPerUnit: string,
+  costPerUnitInCNY: string,
+}
+
 const LdpResultTable = ({resultValues} : Props) => {
   const columns = [
     {
@@ -49,7 +57,7 @@ const LdpResultTable = ({resultValues} : Props) => {
   const convertUSD2CNY = (amount: string): string =>
     bigDecimal.multiply(amount, resultValues.exchangeRate);
 
-  const tableData = [
+  const tableData: TableDisplayValue[] = [
     {
       key: '1',
       feeName: '内陆费',
@@ -80,11 +88,20 @@ const LdpResultTable = ({resultValues} : Props) => {
     }
   ];
 
+  function formatter(tableData: TableDisplayValue) : TableDisplayValue {
+    return {
+      ...tableData,
+      fee: bigDecimal.round(tableData.fee, 2),
+      costPerUnit: bigDecimal.round(tableData.costPerUnit, 2),
+      costPerUnitInCNY: bigDecimal.round(tableData.costPerUnitInCNY, 2)
+    };
+  }
+
   return (
     <>
       <Table
         columns={columns}
-        dataSource={tableData}
+        dataSource={tableData.map(formatter)}
         pagination={false}
         bordered
         size="small"
