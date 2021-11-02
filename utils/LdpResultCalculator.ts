@@ -37,7 +37,7 @@ export default function calcLdp(inputValues: InputValues): ResultAndFees {
   const volumePerContainer: number = 65;
 
   // 计算整柜数量和剩余散柜体积
-  const containerNum = bigDecimal.floor(bigDecimal.divide(bigDecimal.ceil(totalUnitsVolume), volumePerContainer, 1));
+  const containerNum = bigDecimal.floor(bigDecimal.divide(totalUnitsVolume, volumePerContainer, 8));
   const volumeWithoutContainer = bigDecimal.add(
     bigDecimal.modulus(bigDecimal.floor(totalUnitsVolume), volumePerContainer), // 整数部分
     bigDecimal.round(parseFloat(totalUnitsVolume) % 1, 10), // 小数部分
