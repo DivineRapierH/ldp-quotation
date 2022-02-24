@@ -45,6 +45,7 @@ const Home: NextPage = () => {
     {name: 'A-ftdi', fee: 1872},
     {name: 'A-santafe', fee: 1904.5},
     {name: 'Q4-TSS', fee: 1189.5},
+    {name: 'Herman Kay', fee: 3500},
   ];
 
   const onFinish = (values: LdpFormResult) => {
