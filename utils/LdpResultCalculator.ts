@@ -129,6 +129,11 @@ function calcUnitBasedFees(exchangeRate: string, trucking: string, estimatedFeeP
     bigDecimal.multiply(volume, estimatedFeePerUnit),
     30
   );
+  // ENTRY 85
+  // H/D CHARGE 65
+  // CHASSIS CHARGE 3
+  // pallect 10
+  // FOLK LIFT CHARGE 49
   const destinationPortFee = bigDecimal.add(
     bigDecimal.add(
       bigDecimal.add(85, 65),
@@ -138,7 +143,7 @@ function calcUnitBasedFees(exchangeRate: string, trucking: string, estimatedFeeP
       bigDecimal.multiply(volume, 3),
       bigDecimal.add(
         bigDecimal.multiply(volume, 10),
-        bigDecimal.multiply(volume, 35))
+        bigDecimal.multiply(volume, 49))
     )
   );
   return {
