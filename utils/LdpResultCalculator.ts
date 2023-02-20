@@ -228,7 +228,7 @@ function calcContainerBasedFees(exchangeRate: string,
   // clean truck fee
   const cleanTruckFee: number = 50;
   // pre-pull fee
-  const prePullFee: number = 300;
+  const prePullFee: number = 150;
   // congestion fee
   const congestionFee: number = 150;
   const destinationPortFee = bigDecimal.add(
