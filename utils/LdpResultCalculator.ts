@@ -222,7 +222,7 @@ function calcContainerBasedFees(exchangeRate: string,
   // ISF bond fee
   const isfBondFee: number = 0;
   // pier pass fee
-  const pierPassFee: number = 134;
+  const pierPassFee: number = 100;
   // chassis charge fee
   const chassisChargeFee: number = 200;
   // clean truck fee
