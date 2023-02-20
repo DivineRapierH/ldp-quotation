@@ -1,12 +1,12 @@
 import type {NextPage} from 'next'
 import Head from 'next/head'
-import Image from 'next/image'
 import {Button, Row, Col, Form, Input, Divider, Card} from 'antd';
 import styles from '../styles/Home.module.css'
 import LdpForm, {LdpFormResult} from "../components/LdpForm";
 import LdpResultTable from "../components/LdpResultTable";
 import {useState} from "react";
 import calcLdp from "../utils/LdpResultCalculator";
+import {TruckingDetail} from "../utils/LdpResultCalculator";
 import useStateCallback from "../utils/useStateCallback";
 import bigDecimal from "js-big-decimal";
 
@@ -34,18 +34,128 @@ const Home: NextPage = () => {
   const [isInfoCardLoading, setInfoCardLoading] = useState(true);
   const [isResultCalculated, setIsResultCalculated] = useStateCallback(false);
 
-  const truckingOptions = [
-    {name: 'AVALON', fee: 1839.5},
-    {name: 'KW-COI', fee: 1222},
-    {name: 'KW-MAVAN', fee: 929.5},
-    {name: 'INITIAL', fee: 1547},
-    {name: 'RC', fee: 1189.5},
-    {name: 'O-tac', fee: 1287},
-    {name: 'O-jam', fee: 929.5},
-    {name: 'A-ftdi', fee: 1872},
-    {name: 'A-santafe', fee: 1904.5},
-    {name: 'Q4-TSS', fee: 1189.5},
-    {name: 'Herman Kay', fee: 3500},
+  const truckingOptions: Array<{ name: string, trucking: TruckingDetail }> = [
+    {
+      name: 'AVALON',
+      trucking: {
+        containerFee: '1400',
+        unitBasedFee: {
+          volumeLessThan10CBM: '500',
+          volumeBetween10And20CBM: '800',
+          volumeMoreThan20CBM: '1300'
+        }
+      }
+    },
+    {
+      name: 'KW-COI',
+      trucking: {
+        containerFee: '800',
+        unitBasedFee: {
+          volumeLessThan10CBM: '350',
+          volumeBetween10And20CBM: '450',
+          volumeMoreThan20CBM: '800'
+        }
+      }
+    },
+    {
+      name: 'KW-MAVAN',
+      trucking: {
+        containerFee: '700',
+        unitBasedFee: {
+          volumeLessThan10CBM: '300',
+          volumeBetween10And20CBM: '400',
+          volumeMoreThan20CBM: '700'
+        }
+      }
+    },
+    {
+      name: 'KW-MIDWAY',
+      trucking: {
+        containerFee: '700',
+        unitBasedFee: {
+          volumeLessThan10CBM: '300',
+          volumeBetween10And20CBM: '400',
+          volumeMoreThan20CBM: '700'
+        }
+      }
+    },
+    {
+      name: 'INITIAL',
+      trucking: {
+        containerFee: '650',
+        unitBasedFee: {
+          volumeLessThan10CBM: '450',
+          volumeBetween10And20CBM: '550',
+          volumeMoreThan20CBM: '650'
+        }
+      }
+    },
+    {
+      name: 'RC-LA',
+      trucking: {
+        containerFee: '800',
+        unitBasedFee: {
+          volumeLessThan10CBM: '350',
+          volumeBetween10And20CBM: '450',
+          volumeMoreThan20CBM: '800'
+        }
+      }
+    },
+    {
+      name: 'A-ftdi',
+      trucking: {
+        containerFee: '1300',
+        unitBasedFee: {
+          volumeLessThan10CBM: '500',
+          volumeBetween10And20CBM: '650',
+          volumeMoreThan20CBM: '1200'
+        }
+      }
+    },
+    {
+      name: 'A-Alpha',
+      trucking: {
+        containerFee: '1550',
+        unitBasedFee: {
+          volumeLessThan10CBM: '650',
+          volumeBetween10And20CBM: '800',
+          volumeMoreThan20CBM: '1450'
+        }
+      }
+    },
+    {
+      name: 'RC-Qcircle',
+      trucking: {
+        containerFee: '880',
+        unitBasedFee: {
+          volumeLessThan10CBM: '500',
+          volumeBetween10And20CBM: '650',
+          volumeMoreThan20CBM: '780'
+        }
+      }
+    },
+    {
+      name: 'RC-Millburn',
+      trucking: {
+        containerFee: '880',
+        unitBasedFee: {
+          volumeLessThan10CBM: '600',
+          volumeBetween10And20CBM: '700',
+          volumeMoreThan20CBM: '780'
+        }
+      }
+    },
+    {
+      name: 'RC-INTERNAT',
+      trucking: {
+        containerFee: '880',
+        unitBasedFee: {
+          volumeLessThan10CBM: '600',
+          volumeBetween10And20CBM: '700',
+          volumeMoreThan20CBM: '780'
+        }
+      }
+    },
   ];
 
   const onFinish = (values: LdpFormResult) => {
@@ -70,7 +180,7 @@ const Home: NextPage = () => {
       exchangeRate: values.exchangeRate,
       clearancePrice: values.clearancePrice,
       taxRate: values.taxRate,
-      trucking: `${truckingOptions.filter(opt => opt.name === values.trucking)[0].fee}`,
+      trucking: truckingOptions.filter(opt => opt.name === values.trucking)[0].trucking,
       volume: totalVolume,
       estimatedFeePerUnit: values.estimatedFeePerUnit,
       estimatedFeePerContainer: values.estimatedFeePerContainer,
@@ -121,7 +231,7 @@ const Home: NextPage = () => {
         />
         {isResultCalculated && (
           <>
-            <Divider />
+            <Divider/>
             <Row gutter={24}>
               <Col span={8}>
                 <Card title={cardValue.productName} loading={isInfoCardLoading}>
@@ -129,6 +239,9 @@ const Home: NextPage = () => {
                   <p>纸箱尺寸 {cardValue.length}cm * {cardValue.width}cm * {cardValue.height}cm</p>
                   <p>预估总体积 {bigDecimal.round(cardValue.totalVolume, 2)}立方米</p>
                   <p>散货体积 {bigDecimal.round(cardValue.volumeWithoutContainer, 2)}立方米，整柜数量 {cardValue.containerNum}个</p>
+                  {bigDecimal.compareTo(cardValue.volumeWithoutContainer, '0') > 0 &&
+                      <p>⚠️有散货，请注意按照整柜还是散货报价 (同船期是否有货拼)</p>
+                  }
                 </Card>
               </Col>
               <Col span={16}>

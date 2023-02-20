@@ -1,11 +1,21 @@
 import bigDecimal from 'js-big-decimal';
+import {func} from "prop-types";
+
+export interface TruckingDetail {
+  containerFee: string,
+  unitBasedFee: {
+    volumeLessThan10CBM: string,
+    volumeBetween10And20CBM: string,
+    volumeMoreThan20CBM: string
+  }
+}
 
 interface InputValues {
   quantity: string,
   exchangeRate: string,
   clearancePrice: string,
   taxRate: string,
-  trucking: string,
+  trucking: TruckingDetail,
   volume: string,
   estimatedFeePerUnit: string,
   estimatedFeePerContainer: string,
@@ -69,6 +79,20 @@ function calcContainerNumAndRemainingVolume(totalUnitsVolume: string)
   return {containerNum, volumeWithoutContainer};
 }
 
+function getUnitBasedTruckingFee(trucking: TruckingDetail, volume: string): string {
+  const decimalVolume = new bigDecimal(volume);
+  if (decimalVolume.compareTo(new bigDecimal(10)) === -1) {
+    // 10 cbm 以内
+    return trucking.unitBasedFee.volumeLessThan10CBM;
+  } else if (decimalVolume.compareTo(new bigDecimal(20)) <= 0) {
+    // 10 - 20 cbm
+    return trucking.unitBasedFee.volumeBetween10And20CBM;
+  } else {
+    // 20 cbm 以上
+    return trucking.unitBasedFee.volumeMoreThan20CBM;
+  }
+}
+
 export default function calcLdp(inputValues: InputValues): ResultAndFees {
   const quantity = inputValues.quantity;
   const exchangeRate = inputValues.exchangeRate;
@@ -97,8 +121,16 @@ export default function calcLdp(inputValues: InputValues): ResultAndFees {
       bigDecimal.multiply(MPCargoRate, totalClearance))
   );
 
-  const unitBasedFees: VolumeBasedFees = calcUnitBasedFees(exchangeRate, trucking, estimatedFeePerUnit, volumeWithoutContainer)
-  const containerBasedFees: VolumeBasedFees = calcContainerBasedFees(exchangeRate, trucking, estimatedFeePerContainer, containerNum)
+  const unitBasedFees: VolumeBasedFees = calcUnitBasedFees(
+    exchangeRate,
+    getUnitBasedTruckingFee(trucking, volumeWithoutContainer),
+    estimatedFeePerUnit,
+    volumeWithoutContainer)
+  const containerBasedFees: VolumeBasedFees = calcContainerBasedFees(
+    exchangeRate,
+    trucking.containerFee,
+    estimatedFeePerContainer,
+    containerNum)
 
   return {
     landShippingFee: (bigDecimal.add(

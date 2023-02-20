@@ -1,9 +1,10 @@
 import {Button, Form, Col, Row, Input, Select} from "antd";
 import React from "react";
+import {TruckingDetail} from "../utils/LdpResultCalculator";
 
 interface TruckingOptions {
   name: string,
-  fee: number,
+  trucking: TruckingDetail,
 }
 
 export interface LdpFormResult {
@@ -146,7 +147,9 @@ export default function LdpForm(
             <Input type="number" step=".01" suffix="%"/>
           </Form.Item>
         </Col>
-        <Col span={8} key="trucking">
+      </Row>
+      <Row>
+        <Col span={10} key="trucking">
           <Form.Item
             name="trucking"
             label="Trucking"
@@ -160,7 +163,7 @@ export default function LdpForm(
             <Select>
               {truckingOptions.map(opt => (
                 <Select.Option value={opt.name} key={opt.name}>
-                  {`${opt.name} ($${opt.fee})`}
+                  {`${opt.name} ($${opt.trucking.containerFee}) ($${opt.trucking.unitBasedFee.volumeLessThan10CBM}/$${opt.trucking.unitBasedFee.volumeBetween10And20CBM}/$${opt.trucking.unitBasedFee.volumeMoreThan20CBM})`}
                 </Select.Option>
               ))}
             </Select>
@@ -172,6 +175,7 @@ export default function LdpForm(
           <Form.Item
             name="length"
             label="预估箱子长度"
+            tooltip="衣长 + 2cm"
             rules={[
               {
                 required: true,
@@ -190,6 +194,7 @@ export default function LdpForm(
           <Form.Item
             name="width"
             label="预估箱子宽度"
+            tooltip="衣宽 + 2cm"
             rules={[
               {
                 required: true,
@@ -208,6 +213,7 @@ export default function LdpForm(
           <Form.Item
             name="height"
             label="预估箱子高度"
+            tooltip="单件衣高 ✖ 件数 + 2cm"
             rules={[
               {
                 required: true,
