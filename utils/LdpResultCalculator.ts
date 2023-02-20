@@ -233,13 +233,15 @@ function calcContainerBasedFees(exchangeRate: string,
   const congestionFee: number = 150;
   // overdue fee (per diem?)
   const overdueFee: number = 300;
+  // chassis split fee
+  const chassisSplitFee: number = 100;
   const destinationPortFee = bigDecimal.add(
     bigDecimal.add(
       bigDecimal.add(entryFee, hdChargeFee),
       trucking
     ),
     isfFilingFee + isfBondFee + pierPassFee + chassisChargeFee + cleanTruckFee + prePullFee + congestionFee +
-    overdueFee
+    overdueFee + chassisSplitFee
   );
   return {
     landShippingFee: bigDecimal.multiply(landShippingFee, containerNum),
