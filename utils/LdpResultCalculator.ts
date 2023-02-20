@@ -224,7 +224,7 @@ function calcContainerBasedFees(exchangeRate: string,
   // pier pass fee
   const pierPassFee: number = 100;
   // chassis charge fee
-  const chassisChargeFee: number = 200;
+  const chassisChargeFee: number = 350;
   // clean truck fee
   const cleanTruckFee: number = 50;
   // pre-pull fee
