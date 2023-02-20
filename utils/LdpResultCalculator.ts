@@ -226,7 +226,7 @@ function calcContainerBasedFees(exchangeRate: string,
   // chassis charge fee
   const chassisChargeFee: number = 200;
   // clean truck fee
-  const cleanTruckFee: number = 75;
+  const cleanTruckFee: number = 50;
   // pre-pull fee
   const prePullFee: number = 300;
   // congestion fee
