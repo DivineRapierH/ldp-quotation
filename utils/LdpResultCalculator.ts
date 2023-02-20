@@ -1,5 +1,4 @@
 import bigDecimal from 'js-big-decimal';
-import {type} from "os";
 
 interface InputValues {
   quantity: string,
@@ -24,6 +23,51 @@ interface ResultAndFees extends VolumeBasedFees {
   containerNum: string,
 }
 
+function calcContainerNumAndRemainingVolume(totalUnitsVolume: string)
+  : { containerNum: string, volumeWithoutContainer: string } {
+  const volumePerContainer: bigDecimal = new bigDecimal('65');
+  const doubledVolumePerContainer: bigDecimal = volumePerContainer.multiply(new bigDecimal(2));
+  // 体积 / 130 = 2 x 整柜数量 x 65 + 剩余体积 (e.g. 体积为 270, 算式就是 270 / 130 = (2 x 2) x 65 + 10)
+  // 计算整柜数量和剩余散柜体积
+  const halfOfContainerNum: bigDecimal = new bigDecimal(
+    bigDecimal.floor(
+      bigDecimal.divide(
+        totalUnitsVolume,
+        doubledVolumePerContainer,
+        8))
+  );
+  const volumeRemaining: bigDecimal = new bigDecimal(
+    bigDecimal.modulus(
+      totalUnitsVolume,
+      doubledVolumePerContainer)
+  );
+  // 剩余体积 ≥ 100 则再加 2 个整柜
+  // 65 < 剩余体积 ≤ 99 则再加 1 个整柜，剩余作为散货
+  // 50 ≤ 剩余体积 ≤ 65 则再加 1 个整柜
+  // 剩余体积 < 50 则全部作为散货
+  let extraContainerNum: bigDecimal = new bigDecimal(0);
+  let volumeWithoutContainer: string = "0";
+  if (volumeRemaining.compareTo(new bigDecimal(100)) >= 0) {
+    // 剩余体积 ≥ 100 则再加 2 个整柜
+    extraContainerNum = extraContainerNum.add(new bigDecimal(2));
+  } else if (volumeRemaining.compareTo(new bigDecimal(65)) > 1) {
+    // 65 < 剩余体积 ≤ 99 则再加 1 个整柜，剩余作为散货
+    extraContainerNum = extraContainerNum.add(new bigDecimal(1));
+    volumeWithoutContainer = volumeRemaining.subtract(new bigDecimal(65)).getValue();
+  } else if (volumeRemaining.compareTo(new bigDecimal(50)) >= 0) {
+    // 50 ≤ 剩余体积 ≤ 65 则再加 1 个整柜
+    extraContainerNum = extraContainerNum.add(new bigDecimal(1));
+  } else {
+    // 剩余体积 < 50 则全部作为散货
+    volumeWithoutContainer = volumeRemaining.getValue();
+  }
+  const containerNum: string = halfOfContainerNum.multiply(new bigDecimal(2)).add(extraContainerNum).getValue();
+  console.log('柜数' + containerNum);
+  console.log('散货体积' + volumeWithoutContainer);
+
+  return {containerNum, volumeWithoutContainer};
+}
+
 export default function calcLdp(inputValues: InputValues): ResultAndFees {
   const quantity = inputValues.quantity;
   const exchangeRate = inputValues.exchangeRate;
@@ -34,16 +78,7 @@ export default function calcLdp(inputValues: InputValues): ResultAndFees {
   const estimatedFeePerUnit = inputValues.estimatedFeePerUnit;
   const estimatedFeePerContainer = inputValues.estimatedFeePerContainer;
 
-  const volumePerContainer: number = 65;
-
-  // 计算整柜数量和剩余散柜体积
-  const containerNum = bigDecimal.floor(bigDecimal.divide(totalUnitsVolume, volumePerContainer, 8));
-  const volumeWithoutContainer = bigDecimal.add(
-    bigDecimal.modulus(bigDecimal.floor(totalUnitsVolume), volumePerContainer), // 整数部分
-    bigDecimal.round(parseFloat(totalUnitsVolume) % 1, 10), // 小数部分
-  );
-  console.log('柜数' + containerNum);
-  console.log('散货体积' + volumeWithoutContainer);
+  const {containerNum, volumeWithoutContainer} = calcContainerNumAndRemainingVolume(totalUnitsVolume);
 
   // 计算关税（体积无关）
   const totalClearance: string = bigDecimal.multiply(quantity, clearancePrice);
@@ -87,6 +122,13 @@ function calcUnitBasedFees(exchangeRate: string,
                            trucking: string,
                            estimatedFeePerUnit: string,
                            volume: string): VolumeBasedFees {
+  if (volume === '0') {
+    return {
+      landShippingFee: "0",
+      oceanShippingFee: "0",
+      destinationPortFee: "0"
+    };
+  }
   // 内陆费
   // 报关费 RMB
   const clearanceFeeRMB: number = 100;
