@@ -25,22 +25,23 @@ interface ResultAndFees extends VolumeBasedFees {
 
 function calcContainerNumAndRemainingVolume(totalUnitsVolume: string)
   : { containerNum: string, volumeWithoutContainer: string } {
-  const volumePerContainer: bigDecimal = new bigDecimal('65');
-  const doubledVolumePerContainer: bigDecimal = volumePerContainer.multiply(new bigDecimal(2));
+  const volumePerContainer: number = 65;
+  const doubledVolumePerContainer: bigDecimal = new bigDecimal('130');
   // 体积 / 130 = 2 x 整柜数量 x 65 + 剩余体积 (e.g. 体积为 270, 算式就是 270 / 130 = (2 x 2) x 65 + 10)
   // 计算整柜数量和剩余散柜体积
   const halfOfContainerNum: bigDecimal = new bigDecimal(
     bigDecimal.floor(
       bigDecimal.divide(
         totalUnitsVolume,
-        doubledVolumePerContainer,
+        doubledVolumePerContainer.getValue(),
         8))
   );
   const volumeRemaining: bigDecimal = new bigDecimal(
-    bigDecimal.modulus(
+    bigDecimal.subtract(
       totalUnitsVolume,
-      doubledVolumePerContainer)
+      halfOfContainerNum.multiply(doubledVolumePerContainer).getValue())
   );
+  console.log('剩余体积 ' + volumeRemaining.getValue())
   // 剩余体积 ≥ 100 则再加 2 个整柜
   // 65 < 剩余体积 ≤ 99 则再加 1 个整柜，剩余作为散货
   // 50 ≤ 剩余体积 ≤ 65 则再加 1 个整柜
@@ -50,7 +51,7 @@ function calcContainerNumAndRemainingVolume(totalUnitsVolume: string)
   if (volumeRemaining.compareTo(new bigDecimal(100)) >= 0) {
     // 剩余体积 ≥ 100 则再加 2 个整柜
     extraContainerNum = extraContainerNum.add(new bigDecimal(2));
-  } else if (volumeRemaining.compareTo(new bigDecimal(65)) > 1) {
+  } else if (volumeRemaining.compareTo(new bigDecimal(65)) === 1) {
     // 65 < 剩余体积 ≤ 99 则再加 1 个整柜，剩余作为散货
     extraContainerNum = extraContainerNum.add(new bigDecimal(1));
     volumeWithoutContainer = volumeRemaining.subtract(new bigDecimal(65)).getValue();
