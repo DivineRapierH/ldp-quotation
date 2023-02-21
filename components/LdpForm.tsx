@@ -175,6 +175,7 @@ export default function LdpForm(
           <Form.Item
             name="warehouse"
             label="仓库"
+            initialValue={'LA'}
             rules={[
               {
                 required: true,
@@ -183,7 +184,6 @@ export default function LdpForm(
             ]}
           >
             <Select
-              defaultValue="LA"
               options={[
                 { value: 'LA', label: 'LA' },
                 { value: 'NY', label: 'NY' },
