@@ -35,19 +35,19 @@ const LdpResultTable = ({resultValues} : Props) => {
       title: '费用',
       dataIndex: 'fee',
       key: 'fee',
-      render: (fee: number) => <p>{`$ ${fee}`}</p>
+      render: (fee: number) => <p>{`$${fee}`}</p>
     },
     {
       title: '单件成本($)',
       dataIndex: 'costPerUnit',
       key: 'costPerUnit',
-      render: (costPerUnit: number) => <p>{`$ ${costPerUnit}`}</p>
+      render: (costPerUnit: number) => <p>{`$${costPerUnit}`}</p>
     },
     {
       title: '单件成本(¥)',
       dataIndex: 'costPerUnitInCNY',
       key: 'costPerUnitInCNY',
-      render: (costPerUnitInCNY: number) => <p>{`¥ ${costPerUnitInCNY}`}</p>
+      render: (costPerUnitInCNY: number) => <p>{`¥${costPerUnitInCNY}`}</p>
     }
   ];
 
@@ -121,13 +121,13 @@ const LdpResultTable = ({resultValues} : Props) => {
               <Table.Summary.Row>
                 <Table.Summary.Cell index={0}>合计</Table.Summary.Cell>
                 <Table.Summary.Cell index={1}>
-                  <Text >{`$ ${totalFee}`}</Text>
+                  <Text >{`$${totalFee}`}</Text>
                 </Table.Summary.Cell>
                 <Table.Summary.Cell index={2}>
-                  <Text>{`$ ${totalCostPerUnit}`}</Text>
+                  <Text>{`$${totalCostPerUnit}`}</Text>
                 </Table.Summary.Cell>
                 <Table.Summary.Cell index={3}>
-                  <Text>{`¥ ${totalCostPerUnitCNY}`}</Text>
+                  <Text>{`¥${totalCostPerUnitCNY}`}</Text>
                 </Table.Summary.Cell>
               </Table.Summary.Row>
             </>
