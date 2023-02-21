@@ -16,6 +16,7 @@ interface InputValues {
   clearancePrice: string,
   taxRate: string,
   trucking: TruckingDetail,
+  warehouse: string
   volume: string,
   estimatedFeePerUnit: string,
   estimatedFeePerContainer: string,
@@ -99,6 +100,7 @@ export default function calcLdp(inputValues: InputValues): ResultAndFees {
   const clearancePrice = inputValues.clearancePrice;
   const taxRatePercent = inputValues.taxRate;
   const trucking = inputValues.trucking;
+  const warehouse = inputValues.warehouse;
   const totalUnitsVolume = inputValues.volume;
   const estimatedFeePerUnit = inputValues.estimatedFeePerUnit;
   const estimatedFeePerContainer = inputValues.estimatedFeePerContainer;
@@ -122,6 +124,7 @@ export default function calcLdp(inputValues: InputValues): ResultAndFees {
   );
 
   const unitBasedFees: VolumeBasedFees = calcUnitBasedFees(
+    warehouse,
     exchangeRate,
     getUnitBasedTruckingFee(trucking, volumeWithoutContainer),
     estimatedFeePerUnit,
@@ -151,7 +154,8 @@ export default function calcLdp(inputValues: InputValues): ResultAndFees {
   };
 }
 
-function calcUnitBasedFees(exchangeRate: string,
+function calcUnitBasedFees(warehouse: string,
+                           exchangeRate: string,
                            trucking: string,
                            estimatedFeePerUnit: string,
                            volume: string): VolumeBasedFees {
@@ -185,17 +189,31 @@ function calcUnitBasedFees(exchangeRate: string,
   const entryFeePerVolume: number = 85;
   // H/D charge
   const hdChargeFeePerVolume: number = 65;
+  // DOC fee
+  const docFee: number = 55;
+  // ISF filing fee
+  const isfFilingFee: number = 35;
+  // ISF bond fee
+  const isfBondFee: number = 250;
   // chassis charge
-  const chassisChargeFeePerVolume: number = 3;
+  const chassisChargeFeePerVolume: number =
+    warehouse === 'LA' ? 3 : 3;
   // pallet
-  const palletFeePerVolume: number = 10;
+  const palletFeePerVolume: string =
+    warehouse === 'LA' ?
+      bigDecimal.divide(25, '1.5', 8) :
+      bigDecimal.divide(25, '1.5', 8);
   // folk lift charge
-  const folkLiftChargeFeePerVolume: number = 49;
+  const folkLiftChargeFeePerVolume: number =
+    warehouse === 'LA' ? 35 : 70;
   // 目的港费用
   const destinationPortFee = bigDecimal.add(
     bigDecimal.add(
-      bigDecimal.add(entryFeePerVolume, hdChargeFeePerVolume),
-      trucking
+      bigDecimal.add(
+        bigDecimal.add(bigDecimal.add(entryFeePerVolume, hdChargeFeePerVolume), docFee),
+        trucking
+      ),
+      isfFilingFee + isfBondFee
     ),
     bigDecimal.add(
       bigDecimal.multiply(volume, chassisChargeFeePerVolume),
@@ -222,6 +240,8 @@ function calcContainerBasedFees(exchangeRate: string,
   const singleCertFeeRMB: number = 450;
   // THC
   const THCFeeRMB: number = 1230;
+  // VGM
+  const VGMFeeRMB: number = 50;
   // 铅封费
   const sealFeeRMB: number = 50;
   // 报关费
@@ -229,18 +249,18 @@ function calcContainerBasedFees(exchangeRate: string,
   // 舱单费
   const chamberOrderFeeRMB: number = 100;
   // 内装
-  const innerFeeRMB: number = 800;
+  const innerFeeRMB: number = 950;
   // 洋山港
   const yangShanFeeRMB: number = 1000;
   const landShippingFee = bigDecimal.divide(
-    chamberReservationFeeRMB + singleCertFeeRMB + THCFeeRMB + sealFeeRMB + clearanceFeeRMB +
+    chamberReservationFeeRMB + singleCertFeeRMB + VGMFeeRMB + THCFeeRMB + sealFeeRMB + clearanceFeeRMB +
     chamberOrderFeeRMB + innerFeeRMB + yangShanFeeRMB,
     exchangeRate,
     2
   );
 
   // transit part
-  const amsFee: number = 30;
+  const amsFee: number = 35;
   const oceanShippingFee = bigDecimal.add(
     estimatedFeePerContainer, amsFee
   );
@@ -250,10 +270,12 @@ function calcContainerBasedFees(exchangeRate: string,
   const entryFee: number = 85;
   // H/D charge fee
   const hdChargeFee: number = 65;
+  // DOC fee
+  const docFee: number = 55;
   // ISF filing fee
   const isfFilingFee: number = 35;
   // ISF bond fee
-  const isfBondFee: number = 0;
+  const isfBondFee: number = 250;
   // pier pass fee
   const pierPassFee: number = 100;
   // chassis charge fee
@@ -270,7 +292,7 @@ function calcContainerBasedFees(exchangeRate: string,
   const chassisSplitFee: number = 100;
   const destinationPortFee = bigDecimal.add(
     bigDecimal.add(
-      bigDecimal.add(entryFee, hdChargeFee),
+      bigDecimal.add(bigDecimal.add(entryFee, hdChargeFee), docFee),
       trucking
     ),
     isfFilingFee + isfBondFee + pierPassFee + chassisChargeFee + cleanTruckFee + prePullFee + congestionFee +

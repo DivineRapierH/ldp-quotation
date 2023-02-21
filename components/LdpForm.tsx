@@ -14,6 +14,7 @@ export interface LdpFormResult {
   clearancePrice: string,
   taxRate: string,
   trucking: string,
+  warehouse: string
   length: string,
   width: string,
   height: string,
@@ -148,7 +149,7 @@ export default function LdpForm(
           </Form.Item>
         </Col>
       </Row>
-      <Row>
+      <Row gutter={24}>
         <Col span={10} key="trucking">
           <Form.Item
             name="trucking"
@@ -167,6 +168,27 @@ export default function LdpForm(
                 </Select.Option>
               ))}
             </Select>
+          </Form.Item>
+        </Col>
+        <Col span={10}></Col>
+        <Col span={4}>
+          <Form.Item
+            name="warehouse"
+            label="仓库"
+            rules={[
+              {
+                required: true,
+                message: '请选择散货仓库!',
+              },
+            ]}
+          >
+            <Select
+              defaultValue="LA"
+              options={[
+                { value: 'LA', label: 'LA' },
+                { value: 'NY', label: 'NY' },
+              ]}
+            />
           </Form.Item>
         </Col>
       </Row>

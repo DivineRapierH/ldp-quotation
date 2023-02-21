@@ -181,6 +181,7 @@ const Home: NextPage = () => {
       clearancePrice: values.clearancePrice,
       taxRate: values.taxRate,
       trucking: truckingOptions.filter(opt => opt.name === values.trucking)[0].trucking,
+      warehouse: values.warehouse,
       volume: totalVolume,
       estimatedFeePerUnit: values.estimatedFeePerUnit,
       estimatedFeePerContainer: values.estimatedFeePerContainer,
