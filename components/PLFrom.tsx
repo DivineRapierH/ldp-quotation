@@ -11,26 +11,27 @@ export default function PLFrom({onSubmit}: {onSubmit: (values: PLRequestValues) 
       name="pl_form"
       onFinish={values => {
         const plRequestValues: PLRequestValues = {
+          packageType: "SINGLE_COLOR_SINGLE_SIZE",
           poName: values.poName,
           style: values.style,
           color: values.color,
           lineName: values.lineName,
           weightPerPieceInKg: values.weightPerPieceInKg,
-          quantityPerCarton: values.quantityPerCarton,
-          quantityOfSizes: {
-            XXS: values.XXS,
-            XS: values.XS,
-            S: values.S,
-            M: values.M,
-            L: values.L,
-            XL: values.XL,
+          quantityPerCarton: parseInt(values.quantityPerCarton),
+          totalQuantityOfSizes: {
+            XXS: parseInt(values.XXS),
+            XS: parseInt(values.XS),
+            S: parseInt(values.S),
+            M: parseInt(values.M),
+            L: parseInt(values.L),
+            XL: parseInt(values.XL),
           },
-          cartonMeasurements: {
+          cartonMeasurementsInCm: {
             L: values.measurementL,
             W: values.measurementW,
             H: values.measurementH,
           }
-        }
+        };
         onSubmit(plRequestValues);
       }}
     >
@@ -111,6 +112,7 @@ export default function PLFrom({onSubmit}: {onSubmit: (values: PLRequestValues) 
           <Form.Item
             name="quantityPerCarton"
             label="QTY/CTN"
+            normalize={value => parseInt(value)}
             rules={[
               {
                 required: true,
@@ -133,6 +135,7 @@ export default function PLFrom({onSubmit}: {onSubmit: (values: PLRequestValues) 
             name="XXS"
             label="XXS 数量"
             initialValue={0}
+            normalize={value => parseInt(value)}
           >
             <Input type="number"/>
           </Form.Item>
@@ -142,6 +145,7 @@ export default function PLFrom({onSubmit}: {onSubmit: (values: PLRequestValues) 
             name="XS"
             label="XS 数量"
             initialValue={0}
+            normalize={value => parseInt(value)}
           >
             <Input type="number"/>
           </Form.Item>
@@ -151,6 +155,7 @@ export default function PLFrom({onSubmit}: {onSubmit: (values: PLRequestValues) 
             name="S"
             label="S 数量"
             initialValue={0}
+            normalize={value => parseInt(value)}
           >
             <Input type="number"/>
           </Form.Item>
@@ -160,6 +165,7 @@ export default function PLFrom({onSubmit}: {onSubmit: (values: PLRequestValues) 
             name="M"
             label="M 数量"
             initialValue={0}
+            normalize={value => parseInt(value)}
           >
             <Input type="number"/>
           </Form.Item>
@@ -169,6 +175,7 @@ export default function PLFrom({onSubmit}: {onSubmit: (values: PLRequestValues) 
             name="L"
             label="L 数量"
             initialValue={0}
+            normalize={value => parseInt(value)}
           >
             <Input type="number"/>
           </Form.Item>
@@ -178,6 +185,7 @@ export default function PLFrom({onSubmit}: {onSubmit: (values: PLRequestValues) 
             name="XL"
             label="XL 数量"
             initialValue={0}
+            normalize={value => parseInt(value)}
           >
             <Input type="number"/>
           </Form.Item>

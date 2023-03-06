@@ -17,13 +17,14 @@ export interface PLFormValues {
 }
 
 export interface PLRequestValues {
+  packageType: string,
   poName: string,
   style: string,
   color: string,
   lineName: string,
   weightPerPieceInKg: string,
   quantityPerCarton: number,
-  quantityOfSizes: {
+  totalQuantityOfSizes: {
     XXS: number,
     XS: number,
     S: number,
@@ -31,7 +32,7 @@ export interface PLRequestValues {
     L: number,
     XL: number
   },
-  cartonMeasurements: {
+  cartonMeasurementsInCm: {
     L: string,
     W: string,
     H: string

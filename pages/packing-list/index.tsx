@@ -4,10 +4,15 @@ import Head from "next/head";
 import PLFrom from "../../components/PLFrom";
 import {PLRequestValues} from "../../components/DTOs";
 import axios from "axios";
+import {message} from "antd";
+import {MessageInstance} from "antd/lib/message/interface";
 
 const PLHome: NextPage = () => {
+  const [messageApi, contextHolder] = message.useMessage();
+
   return (
     <div className={styles.container}>
+      {contextHolder}
       <Head>
         <title>PL Generator</title>
         <meta name="description" content="PL 生成器"/>
@@ -20,7 +25,7 @@ const PLHome: NextPage = () => {
         </h1>
         <PLFrom
           onSubmit={request => {
-            callApi(request);
+            callApi(request, messageApi);
           }}
         />
       </main>
@@ -28,25 +33,37 @@ const PLHome: NextPage = () => {
   );
 };
 
-function callApi(request: PLRequestValues) {
+function callApi(request: PLRequestValues, messageApi: MessageInstance) {
   const url = 'https://xdht.huanglifan.com/api/packing-list/output-excel';
   // Assume url is the API endpoint that returns an octet-stream file
-  axios.post(url, request)
+  const body: Array<PLRequestValues> = [request];
+  axios.post(url, body, {responseType: 'blob'})
     .then(response => {
-      // Assume filename is obtained from response headers
-      const blob = new Blob([response.data], {type: response.headers['content-type']});
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      // @ts-ignore
-      a.download = response.headers.get("Content-Disposition").split("filename=")[1] || 'download';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
+      // get Content-Disposition header
+      const contentDisposition = response.headers['Content-Disposition'];
+      // extract filename using regex
+      const filename = contentDisposition ? contentDisposition.match(/filename="(.+)"/)[1] : 'PL.xlsx';
+      console.log('filename: ' + filename);
+      // create a file link
+      const fileLink = URL.createObjectURL(response.data);
+      // create an <a> element
+      const link = document.createElement('a');
+      // set href and download attributes
+      link.href = fileLink;
+      link.download = filename;
+      // append to document body
+      document.body.appendChild(link);
+      // click it
+      link.click();
+      // remove it
+      document.body.removeChild(link);
+      // revoke file link
+      URL.revokeObjectURL(fileLink);
+      messageApi.success('下载成功').then(() => {});
     })
     .catch(error => {
       // Handle error
+      messageApi.error('出错了！').then(() => {});
     });
 }
 
