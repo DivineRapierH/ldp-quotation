@@ -2,7 +2,10 @@ import {Button, Col, Form, Input, Row} from "antd";
 import React from "react";
 import {PLFormValues, PLRequestValues} from "./DTOs";
 
-export default function PLFrom({onSubmit}: {onSubmit: (values: PLRequestValues) => void}) {
+export default function PLFrom({onSubmit, isLoading}: {
+  onSubmit: (values: PLRequestValues) => void,
+  isLoading: boolean
+}) {
   const [form] = Form.useForm();
 
   return (
@@ -241,7 +244,12 @@ export default function PLFrom({onSubmit}: {onSubmit: (values: PLRequestValues) 
         </Col>
       </Row>
       <Form.Item>
-        <Button type="primary" htmlType="submit">
+        <Button
+          type="primary"
+          htmlType="submit"
+          loading={isLoading}
+          disabled={isLoading}
+        >
           生成 PL Excel
         </Button>
       </Form.Item>

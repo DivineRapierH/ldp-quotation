@@ -6,8 +6,10 @@ import {PLRequestValues} from "../../components/DTOs";
 import axios from "axios";
 import {message} from "antd";
 import {MessageInstance} from "antd/lib/message/interface";
+import {useState} from "react";
 
 const PLHome: NextPage = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
 
   return (
@@ -24,8 +26,9 @@ const PLHome: NextPage = () => {
           Packing List
         </h1>
         <PLFrom
+          isLoading={isLoading}
           onSubmit={request => {
-            callApi(request, messageApi);
+            callApi(request, messageApi, setIsLoading);
           }}
         />
       </main>
@@ -33,7 +36,10 @@ const PLHome: NextPage = () => {
   );
 };
 
-function callApi(request: PLRequestValues, messageApi: MessageInstance) {
+function callApi(request: PLRequestValues,
+                 messageApi: MessageInstance,
+                 setIsLoading: (isLoading: boolean) => void) {
+  setIsLoading(true);
   const url = 'https://xdht.huanglifan.com/api/packing-list/output-excel';
   // Assume url is the API endpoint that returns an octet-stream file
   const body: Array<PLRequestValues> = [request];
@@ -59,11 +65,15 @@ function callApi(request: PLRequestValues, messageApi: MessageInstance) {
       document.body.removeChild(link);
       // revoke file link
       URL.revokeObjectURL(fileLink);
-      messageApi.success('下载成功').then(() => {});
+      messageApi.success('下载成功').then(() => {
+        setIsLoading(false);
+      });
     })
     .catch(error => {
       // Handle error
-      messageApi.error('出错了！').then(() => {});
+      messageApi.error('出错了！').then(() => {
+        setIsLoading(false);
+      });
     });
 }
 
