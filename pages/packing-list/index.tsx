@@ -40,8 +40,8 @@ function callApi(request: PLRequestValues,
                  messageApi: MessageInstance,
                  setIsLoading: (isLoading: boolean) => void) {
   setIsLoading(true);
-  // const url = 'https://xdht.huanglifan.com/api/packing-list/output-excel';
-  const url = 'http://localhost:8080/api/packing-list/output-excel';
+  const url = 'https://xdht.huanglifan.com/api/packing-list/output-excel';
+  // const url = 'http://localhost:8080/api/packing-list/output-excel';
   // Assume url is the API endpoint that returns an octet-stream file
   axios.post(url, request, {responseType: 'blob'})
     .then(response => {
