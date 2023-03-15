@@ -1,45 +1,88 @@
-import {Button, Col, Form, Input, Row} from "antd";
+import {Button, Col, Divider, Form, Input, InputNumber, Row, Select, Space} from "antd";
 import React from "react";
 import {PLFormValues, PLRequestValues} from "./DTOs";
+import {MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
 
 export default function PLFrom({onSubmit, isLoading}: {
   onSubmit: (values: PLRequestValues) => void,
   isLoading: boolean
 }) {
   const [form] = Form.useForm();
+  const sizeConstants = [
+    {value: 'XXS', label: 'XXS'},
+    {value: 'XS', label: 'XS'},
+    {value: 'S', label: 'S'},
+    {value: 'M', label: 'M'},
+    {value: 'L', label: 'L'},
+    {value: 'XL', label: 'XL'},
+    {value: 'XXL', label: 'XXL'},
+    {value: '1X', label: '1X'},
+    {value: '2X', label: '2X'},
+    {value: '3X', label: '3X'},
+    {value: '4X', label: '4X'},
+    {value: '5X', label: '5X'},
+  ];
 
   return (
     <Form
       form={form}
       name="pl_form"
+      layout={'vertical'}
       onFinish={values => {
         const plRequestValues: PLRequestValues = {
-          packageType: "SINGLE_COLOR_SINGLE_SIZE",
+          companyName: values.companyName,
+          factoryName: values.factoryName,
           poName: values.poName,
           style: values.style,
-          color: values.color,
-          lineName: values.lineName,
           weightPerPieceInKg: values.weightPerPieceInKg,
+          cartonBoxWeightInKg: values.cartonBoxWeightInKg,
           quantityPerCarton: parseInt(values.quantityPerCarton),
-          totalQuantityOfSizes: {
-            XXS: parseInt(values.XXS),
-            XS: parseInt(values.XS),
-            S: parseInt(values.S),
-            M: parseInt(values.M),
-            L: parseInt(values.L),
-            XL: parseInt(values.XL),
-          },
           cartonMeasurementsInCm: {
             L: values.measurementL,
             W: values.measurementW,
             H: values.measurementH,
-          }
+          },
+          colorSizeQuantityList: values.colorSizeQuantityList,
         };
         onSubmit(plRequestValues);
       }}
     >
       <Row gutter={24}>
-        <Col span={8}>
+        <Col span={6}>
+          <Form.Item
+            name="companyName"
+            label="公司"
+            initialValue={"苏州市新大华泰进出口有限公司"}
+            rules={[
+              {
+                required: true,
+                message: '请选择公司!',
+              },
+            ]}
+          >
+            <Select
+              options={[
+                {value: '苏州市新大华泰进出口有限公司', label: '苏州市新大华泰进出口有限公司'},
+                {value: '苏州市新恒大进出口有限公司', label: '苏州市新恒大进出口有限公司'},
+              ]}
+            />
+          </Form.Item>
+        </Col>
+        <Col span={6}>
+          <Form.Item
+            name="factoryName"
+            label="加工工厂"
+            rules={[
+              {
+                required: true,
+                message: '请输入加工工厂名称!',
+              },
+            ]}
+          >
+            <Input type="text"/>
+          </Form.Item>
+        </Col>
+        <Col span={6}>
           <Form.Item
             name="poName"
             label="PO NO."
@@ -53,7 +96,7 @@ export default function PLFrom({onSubmit, isLoading}: {
             <Input type="text"/>
           </Form.Item>
         </Col>
-        <Col span={8}>
+        <Col span={6}>
           <Form.Item
             name="style"
             label="STYLE#"
@@ -67,51 +110,9 @@ export default function PLFrom({onSubmit, isLoading}: {
             <Input type="text"/>
           </Form.Item>
         </Col>
-        <Col span={8}>
-          <Form.Item
-            name="color"
-            label="COLOR"
-            rules={[
-              {
-                required: true,
-                message: '请输入 COLOR !',
-              },
-            ]}
-          >
-            <Input type="text"/>
-          </Form.Item>
-        </Col>
       </Row>
       <Row gutter={24}>
-        <Col span={8}>
-          <Form.Item
-            name="lineName"
-            label="LINE"
-            rules={[
-              {
-                required: true,
-                message: '请输入 LINE !',
-              },
-            ]}
-          >
-            <Input type="text"/>
-          </Form.Item>
-        </Col>
-        <Col span={8}>
-          <Form.Item
-            name="weightPerPieceInKg"
-            label="单件净重 (KG)"
-            rules={[
-              {
-                required: true,
-                message: '请输入 单件净重 !',
-              },
-            ]}
-          >
-            <Input type="text"/>
-          </Form.Item>
-        </Col>
-        <Col span={8}>
+        <Col span={6}>
           <Form.Item
             name="quantityPerCarton"
             label="QTY/CTN"
@@ -126,81 +127,42 @@ export default function PLFrom({onSubmit, isLoading}: {
             <Input type="number"/>
           </Form.Item>
         </Col>
-      </Row>
-      <Row>
-        <Col span={8}>
-          Size:
-        </Col>
-      </Row>
-      <Row gutter={24}>
-        <Col span={4}>
+        <Col span={6}>
           <Form.Item
-            name="XXS"
-            label="XXS 数量"
-            initialValue={0}
-            normalize={value => parseInt(value)}
+            name="weightPerPieceInKg"
+            label="单件净重 (KG)"
+            rules={[
+              {
+                required: true,
+                message: '请输入 单件净重 !',
+              },
+            ]}
           >
-            <Input type="number"/>
+            <Input type="text"/>
           </Form.Item>
         </Col>
-        <Col span={4}>
+        <Col span={6}>
           <Form.Item
-            name="XS"
-            label="XS 数量"
-            initialValue={0}
-            normalize={value => parseInt(value)}
+            name="cartonBoxWeightInKg"
+            label="单个纸箱重量 (KG)"
+            rules={[
+              {
+                required: true,
+                message: '请输入 单个纸箱重量 !',
+              },
+            ]}
           >
-            <Input type="number"/>
-          </Form.Item>
-        </Col>
-        <Col span={4}>
-          <Form.Item
-            name="S"
-            label="S 数量"
-            initialValue={0}
-            normalize={value => parseInt(value)}
-          >
-            <Input type="number"/>
-          </Form.Item>
-        </Col>
-        <Col span={4}>
-          <Form.Item
-            name="M"
-            label="M 数量"
-            initialValue={0}
-            normalize={value => parseInt(value)}
-          >
-            <Input type="number"/>
-          </Form.Item>
-        </Col>
-        <Col span={4}>
-          <Form.Item
-            name="L"
-            label="L 数量"
-            initialValue={0}
-            normalize={value => parseInt(value)}
-          >
-            <Input type="number"/>
-          </Form.Item>
-        </Col>
-        <Col span={4}>
-          <Form.Item
-            name="XL"
-            label="XL 数量"
-            initialValue={0}
-            normalize={value => parseInt(value)}
-          >
-            <Input type="number"/>
+            <Input type="text"/>
           </Form.Item>
         </Col>
       </Row>
       <Row>
-        <Col span={8}>
+        <Col span={6}>
           Measurements:
         </Col>
       </Row>
       <Row gutter={24}>
-        <Col span={8}>
+        <Col span={6}>
           <Form.Item
             name="measurementL"
             label="LENGTH (cm)"
@@ -214,7 +176,7 @@ export default function PLFrom({onSubmit, isLoading}: {
             <Input type="text"/>
           </Form.Item>
         </Col>
-        <Col span={8}>
+        <Col span={6}>
           <Form.Item
             name="measurementW"
             label="WIDTH (cm)"
@@ -228,7 +190,7 @@ export default function PLFrom({onSubmit, isLoading}: {
             <Input type="text"/>
           </Form.Item>
         </Col>
-        <Col span={8}>
+        <Col span={6}>
           <Form.Item
             name="measurementH"
             label="HEIGHT (cm)"
@@ -243,6 +205,112 @@ export default function PLFrom({onSubmit, isLoading}: {
           </Form.Item>
         </Col>
       </Row>
+      <Divider orientation="left">颜色尺码数量:</Divider>
+      <Form.List name="colorSizeQuantityList">
+        {(colorFields, {add, remove}) => (
+          <>
+            {colorFields.map((colorField) => (
+              <>
+                <Row key={colorField.key}>
+                  <Col span={6}>
+                    <Form.Item
+                      {...colorField}
+                      label="颜色"
+                      name={[colorField.name, 'color']}
+                      key={colorField.key + 'color'}
+                      rules={[{required: true, message: '请输入颜色!'}]}
+                    >
+                      <Input/>
+                    </Form.Item>
+                  </Col>
+                  <Col span={6} offset={1}>
+                    <Form.Item
+                      {...colorField}
+                      label="包装方式"
+                      name={[colorField.name, 'packageType']}
+                      key={colorField.key + 'packageType'}
+                      rules={[{required: true, message: '请选择包装方式!'}]}
+                      initialValue={'SINGLE_COLOR_SINGLE_SIZE'}
+                    >
+                      <Select options={[
+                        {value: 'SINGLE_COLOR_SINGLE_SIZE', label: '独色独码'},
+                        {value: 'SINGLE_COLOR_MULTI_SIZE', label: '独色混码'},
+                      ]}/>
+                    </Form.Item>
+                  </Col>
+                  <Col span={2} offset={1}>
+                    <MinusCircleOutlined
+                      onClick={() => remove(colorField.name)}
+                      className={'dynamic-delete-button'}
+                    />
+                  </Col>
+                </Row>
+                <Row>
+                  sizes:
+                </Row>
+                <Row gutter={24}>
+                  {sizeConstants.map((sizeConstant, index) => {
+                    return (
+                      <Col span={4} key={colorField.key + sizeConstant.label + '-card'}>
+                        <Form.Item
+                          {...colorField}
+                          label={sizeConstant.label}
+                          name={[colorField.name, 'sizeQuantityRatioList', index, 'size']}
+                          key={colorField.key + sizeConstant.label + index + 'size'}
+                          initialValue={sizeConstant.value}
+                          hidden={true}
+                        >
+                          <Input/>
+                        </Form.Item>
+                        <Form.Item
+                          {...colorField}
+                          label={sizeConstant.value + ' 的数量'}
+                          name={[colorField.name, 'sizeQuantityRatioList', index, 'quantity']}
+                          key={colorField.key + sizeConstant.label + index + 'quantity'}
+                          initialValue={0}
+                        >
+                          <InputNumber min={0}/>
+                        </Form.Item>
+                        {(
+                          <Form.Item
+                            noStyle
+                            shouldUpdate
+                          >
+                            {
+                              ({getFieldValue}) => getFieldValue(['colorSizeQuantityList', colorField.name, 'packageType']) === 'SINGLE_COLOR_MULTI_SIZE' ? (
+                                <Form.Item
+                                  {...colorField}
+                                  label={sizeConstant.label + ' 尺码配比'}
+                                  name={[colorField.name, 'sizeQuantityRatioList', index, 'ratio']}
+                                  key={colorField.key + sizeConstant.label + index + 'ratio'}
+                                  rules={[{required: true, message: '请输入尺码配比!'}]}
+                                  initialValue={0}
+                                >
+                                  <InputNumber min={0} size="small"/>
+                                </Form.Item>) : null
+                            }
+                          </Form.Item>
+                        )}
+                      </Col>
+                    )
+                  })}
+                </Row>
+
+                <Divider/>
+              </>
+            ))}
+            <Row>
+              <Form.Item>
+                <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined/>}>
+                  增加颜色
+                </Button>
+              </Form.Item>
+            </Row>
+          </>
+        )}
+      </Form.List>
+
+
       <Form.Item>
         <Button
           type="primary"

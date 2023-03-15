@@ -1,40 +1,53 @@
 export interface PLFormValues {
+  companyName: string,
+  factoryName: string,
   poName: string,
   style: string,
-  color: string,
-  lineName: string,
-  weightPerPieceInKg: string,
   quantityPerCarton: number,
-  XXS: number,
-  XS: number,
-  S: number,
-  M: number,
-  L: number,
-  XL: number,
+  weightPerPieceInKg: string,
+  cartonBoxWeightInKg: string,
   measurementL: string,
   measurementW: string,
-  measurementH: string
+  measurementH: string,
+  colorSizeQuantityList: [
+    {
+      packageType: string,
+      color: string,
+      sizeQuantityRatioList: [
+        {
+          size: string,
+          quantity: number
+          ratio: number|null
+        }
+      ]
+    }
+  ],
 }
 
 export interface PLRequestValues {
-  packageType: string,
+  companyName: string,
+  factoryName: string,
   poName: string,
   style: string,
-  color: string,
-  lineName: string,
   weightPerPieceInKg: string,
   quantityPerCarton: number,
-  totalQuantityOfSizes: {
-    XXS: number,
-    XS: number,
-    S: number,
-    M: number,
-    L: number,
-    XL: number
-  },
+  cartonBoxWeightInKg: string,
   cartonMeasurementsInCm: {
     L: string,
     W: string,
     H: string
-  }
+  },
+  colorSizeQuantityList: [
+    {
+      packageType: string,
+      color: string,
+      sizeQuantityRatioList: [
+        {
+          size: string,
+          quantity: number
+          ratio: number|null
+        }
+      ]
+    }
+  ],
 }
