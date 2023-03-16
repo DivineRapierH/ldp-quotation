@@ -37,11 +37,6 @@ export default function PLFrom({onSubmit, isLoading}: {
           weightPerPieceInKg: values.weightPerPieceInKg,
           cartonBoxWeightInKg: values.cartonBoxWeightInKg,
           quantityPerCarton: parseInt(values.quantityPerCarton),
-          cartonMeasurementsInCm: {
-            L: values.measurementL,
-            W: values.measurementW,
-            H: values.measurementH,
-          },
           colorSizeQuantityList: values.colorSizeQuantityList,
         };
         onSubmit(plRequestValues);
@@ -156,62 +151,13 @@ export default function PLFrom({onSubmit, isLoading}: {
           </Form.Item>
         </Col>
       </Row>
-      <Row>
-        <Col span={6}>
-          Measurements:
-        </Col>
-      </Row>
-      <Row gutter={24}>
-        <Col span={6}>
-          <Form.Item
-            name="measurementL"
-            label="LENGTH (cm)"
-            rules={[
-              {
-                required: true,
-                message: '请输入 LENGTH !',
-              },
-            ]}
-          >
-            <Input type="text"/>
-          </Form.Item>
-        </Col>
-        <Col span={6}>
-          <Form.Item
-            name="measurementW"
-            label="WIDTH (cm)"
-            rules={[
-              {
-                required: true,
-                message: '请输入 WIDTH !',
-              },
-            ]}
-          >
-            <Input type="text"/>
-          </Form.Item>
-        </Col>
-        <Col span={6}>
-          <Form.Item
-            name="measurementH"
-            label="HEIGHT (cm)"
-            rules={[
-              {
-                required: true,
-                message: '请输入 HEIGHT !',
-              },
-            ]}
-          >
-            <Input type="text"/>
-          </Form.Item>
-        </Col>
-      </Row>
       <Divider orientation="left">颜色尺码数量:</Divider>
       <Form.List name="colorSizeQuantityList">
         {(colorFields, {add, remove}) => (
           <>
-            {colorFields.map((colorField) => (
-              <>
-                <Row key={colorField.key}>
+            {colorFields.map((colorField, index) => (
+              <div key={colorField.key + 'container'}>
+                <Row key={colorField.key + 'main'}>
                   <Col span={6}>
                     <Form.Item
                       {...colorField}
@@ -243,6 +189,46 @@ export default function PLFrom({onSubmit, isLoading}: {
                       onClick={() => remove(colorField.name)}
                       className={'dynamic-delete-button'}
                     />
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={6}>
+                    Measurements:
+                  </Col>
+                </Row>
+                <Row gutter={24} key={colorField.key + 'measurements'}>
+                  <Col span={6}>
+                    <Form.Item
+                      {...colorField}
+                      label="LENGTH (cm)"
+                      name={[colorField.name, 'cartonMeasurementsInCm', 'L']}
+                      key={colorField.key + index + 'measurementL'}
+                      rules={[{required: true, message: '请输入 LENGTH!'}]}
+                    >
+                      <Input type="text"/>
+                    </Form.Item>
+                  </Col>
+                  <Col span={6}>
+                    <Form.Item
+                      {...colorField}
+                      label="WIDTH (cm)"
+                      name={[colorField.name, 'cartonMeasurementsInCm', 'W']}
+                      key={colorField.key + index + 'measurementW'}
+                      rules={[{required: true, message: '请输入 WIDTH!'}]}
+                    >
+                      <Input type="text"/>
+                    </Form.Item>
+                  </Col>
+                  <Col span={6}>
+                    <Form.Item
+                      {...colorField}
+                      label="HEIGHT (cm)"
+                      name={[colorField.name, 'cartonMeasurementsInCm', 'H']}
+                      key={colorField.key + index + 'measurementH'}
+                      rules={[{required: true, message: '请输入 HEIGHT!'}]}
+                    >
+                      <Input type="text"/>
+                    </Form.Item>
                   </Col>
                 </Row>
                 <Row>
@@ -297,7 +283,7 @@ export default function PLFrom({onSubmit, isLoading}: {
                 </Row>
 
                 <Divider/>
-              </>
+              </div>
             ))}
             <Row>
               <Form.Item>

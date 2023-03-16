@@ -6,13 +6,15 @@ export interface PLFormValues {
   quantityPerCarton: number,
   weightPerPieceInKg: string,
   cartonBoxWeightInKg: string,
-  measurementL: string,
-  measurementW: string,
-  measurementH: string,
   colorSizeQuantityList: [
     {
       packageType: string,
       color: string,
+      cartonMeasurementsInCm: {
+        L: string,
+        W: string,
+        H: string
+      },
       sizeQuantityRatioList: [
         {
           size: string,
@@ -32,15 +34,15 @@ export interface PLRequestValues {
   weightPerPieceInKg: string,
   quantityPerCarton: number,
   cartonBoxWeightInKg: string,
-  cartonMeasurementsInCm: {
-    L: string,
-    W: string,
-    H: string
-  },
   colorSizeQuantityList: [
     {
       packageType: string,
       color: string,
+      cartonMeasurementsInCm: {
+        L: string,
+        W: string,
+        H: string
+      },
       sizeQuantityRatioList: [
         {
           size: string,
