@@ -3,6 +3,7 @@ export interface PLFormValues {
   factoryName: string,
   poName: string,
   style: string,
+  ref: string|null,
   quantityPerCarton: number,
   weightPerPieceInKg: string,
   cartonBoxWeightInKg: string,
@@ -10,6 +11,7 @@ export interface PLFormValues {
     {
       packageType: string,
       color: string,
+      colorCode: string|null,
       cartonMeasurementsInCm: {
         L: string,
         W: string,
@@ -31,6 +33,7 @@ export interface PLRequestValues {
   factoryName: string,
   poName: string,
   style: string,
+  ref: string|null,
   weightPerPieceInKg: string,
   quantityPerCarton: number,
   cartonBoxWeightInKg: string,
@@ -38,6 +41,7 @@ export interface PLRequestValues {
     {
       packageType: string,
       color: string,
+      colorCode: string|null,
       cartonMeasurementsInCm: {
         L: string,
         W: string,

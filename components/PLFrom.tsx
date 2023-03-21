@@ -34,6 +34,7 @@ export default function PLFrom({onSubmit, isLoading}: {
           factoryName: values.factoryName,
           poName: values.poName,
           style: values.style,
+          ref: values.ref,
           weightPerPieceInKg: values.weightPerPieceInKg,
           cartonBoxWeightInKg: values.cartonBoxWeightInKg,
           quantityPerCarton: parseInt(values.quantityPerCarton),
@@ -150,6 +151,14 @@ export default function PLFrom({onSubmit, isLoading}: {
             <Input type="text"/>
           </Form.Item>
         </Col>
+        <Col span={6}>
+          <Form.Item
+            name="ref"
+            label="REF#"
+          >
+            <Input type="text"/>
+          </Form.Item>
+        </Col>
       </Row>
       <Divider orientation="left">颜色尺码数量:</Divider>
       <Form.List name="colorSizeQuantityList">
@@ -165,6 +174,16 @@ export default function PLFrom({onSubmit, isLoading}: {
                       name={[colorField.name, 'color']}
                       key={colorField.key + 'color'}
                       rules={[{required: true, message: '请输入颜色!'}]}
+                    >
+                      <Input/>
+                    </Form.Item>
+                  </Col>
+                  <Col span={6}>
+                    <Form.Item
+                      {...colorField}
+                      label="颜色代码"
+                      name={[colorField.name, 'colorCode']}
+                      key={colorField.key + 'colorCode'}
                     >
                       <Input/>
                     </Form.Item>
