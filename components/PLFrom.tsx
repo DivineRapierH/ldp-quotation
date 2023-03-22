@@ -1,6 +1,6 @@
 import {Button, Col, Divider, Form, Input, InputNumber, Row, Select, Space} from "antd";
 import React from "react";
-import {PLFormValues, PLRequestValues} from "./DTOs";
+import {PLRequestValues} from "./DTOs";
 import {MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
 
 export default function PLFrom({onSubmit, isLoading}: {
@@ -32,6 +32,7 @@ export default function PLFrom({onSubmit, isLoading}: {
         const plRequestValues: PLRequestValues = {
           companyName: values.companyName,
           factoryName: values.factoryName,
+          factoryAbbr: values.factoryAbbr,
           poName: values.poName,
           style: values.style,
           ref: values.ref,
@@ -44,7 +45,7 @@ export default function PLFrom({onSubmit, isLoading}: {
       }}
     >
       <Row gutter={24}>
-        <Col span={6}>
+        <Col span={10}>
           <Form.Item
             name="companyName"
             label="公司"
@@ -64,7 +65,7 @@ export default function PLFrom({onSubmit, isLoading}: {
             />
           </Form.Item>
         </Col>
-        <Col span={6}>
+        <Col span={7}>
           <Form.Item
             name="factoryName"
             label="加工工厂"
@@ -78,6 +79,16 @@ export default function PLFrom({onSubmit, isLoading}: {
             <Input type="text"/>
           </Form.Item>
         </Col>
+        <Col span={7}>
+          <Form.Item
+            name="factoryAbbr"
+            label="工厂缩写"
+          >
+            <Input type="text"/>
+          </Form.Item>
+        </Col>
+      </Row>
+      <Row gutter={24}>
         <Col span={6}>
           <Form.Item
             name="poName"
@@ -102,6 +113,14 @@ export default function PLFrom({onSubmit, isLoading}: {
                 message: '请输入 STYLE# !',
               },
             ]}
+          >
+            <Input type="text"/>
+          </Form.Item>
+        </Col>
+        <Col span={6}>
+          <Form.Item
+            name="ref"
+            label="REF#"
           >
             <Input type="text"/>
           </Form.Item>
@@ -147,14 +166,6 @@ export default function PLFrom({onSubmit, isLoading}: {
                 message: '请输入 单个纸箱重量 !',
               },
             ]}
-          >
-            <Input type="text"/>
-          </Form.Item>
-        </Col>
-        <Col span={6}>
-          <Form.Item
-            name="ref"
-            label="REF#"
           >
             <Input type="text"/>
           </Form.Item>

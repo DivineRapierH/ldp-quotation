@@ -1,6 +1,7 @@
 export interface PLFormValues {
   companyName: string,
   factoryName: string,
+  factoryAbbr: string|null,
   poName: string,
   style: string,
   ref: string|null,
@@ -31,6 +32,7 @@ export interface PLFormValues {
 export interface PLRequestValues {
   companyName: string,
   factoryName: string,
+  factoryAbbr: string|null,
   poName: string,
   style: string,
   ref: string|null,

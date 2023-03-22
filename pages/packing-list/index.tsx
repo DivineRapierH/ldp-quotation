@@ -45,11 +45,7 @@ function callApi(request: PLRequestValues,
   // Assume url is the API endpoint that returns an octet-stream file
   axios.post(url, request, {responseType: 'blob'})
     .then(response => {
-      // get Content-Disposition header
-      const contentDisposition = response.headers['Content-Disposition'];
-      // extract filename using regex
-      const filename = contentDisposition ? contentDisposition.match(/filename="(.+)"/)[1] : 'PL.xlsx';
-      console.log('filename: ' + filename);
+      const filename = `${request.poName}-${request.style}-${request.factoryAbbr ? request.factoryAbbr : request.factoryName}.xlsx`;
       // create a file link
       const fileLink = URL.createObjectURL(response.data);
       // create an <a> element
