@@ -21,7 +21,7 @@ interface TableDisplayValue {
   feeName: string,
   fee: string,
   costPerUnit: string,
-  costPerUnitInCNY: string,
+  // costPerUnitInCNY: string,
 }
 
 const LdpResultTable = ({resultValues} : Props) => {
@@ -35,56 +35,58 @@ const LdpResultTable = ({resultValues} : Props) => {
       title: '费用',
       dataIndex: 'fee',
       key: 'fee',
-      render: (fee: number) => <p>{`$${fee}`}</p>
+      render: (fee: number) => <p>{`${fee}`}</p>
     },
     {
-      title: '单件成本($)',
+      title: '单件成本',
       dataIndex: 'costPerUnit',
       key: 'costPerUnit',
-      render: (costPerUnit: number) => <p>{`$${costPerUnit}`}</p>
+      render: (costPerUnit: number) => <p>{`${costPerUnit}`}</p>
     },
-    {
-      title: '单件成本(¥)',
-      dataIndex: 'costPerUnitInCNY',
-      key: 'costPerUnitInCNY',
-      render: (costPerUnitInCNY: number) => <p>{`¥${costPerUnitInCNY}`}</p>
-    }
+    // {
+    //   title: '单件成本(¥)',
+    //   dataIndex: 'costPerUnitInCNY',
+    //   key: 'costPerUnitInCNY',
+    //   render: (costPerUnitInCNY: number) => <p>{`¥${costPerUnitInCNY}`}</p>
+    // }
   ];
 
   const calcCostPerUnit = (totalCost: string): string =>
     bigDecimal.divide(totalCost, resultValues.quantity, 5);
 
-  const convertUSD2CNY = (amount: string): string =>
-    bigDecimal.multiply(amount, resultValues.exchangeRate);
+  const convertUSD2CNY = (amount: string): string => {
+    return bigDecimal.multiply(amount, resultValues.exchangeRate);
+  }
+
 
   const tableData: TableDisplayValue[] = [
     {
       key: '1',
       feeName: '内陆费',
-      fee: resultValues.landShippingFee,
-      costPerUnit: calcCostPerUnit(resultValues.landShippingFee),
-      costPerUnitInCNY: convertUSD2CNY(calcCostPerUnit(resultValues.landShippingFee)),
+      fee: `¥${bigDecimal.round(convertUSD2CNY(resultValues.landShippingFee), 2)}`,
+      costPerUnit: `¥${bigDecimal.round(convertUSD2CNY(calcCostPerUnit(resultValues.landShippingFee)), 2)}`,
+      // costPerUnitInCNY: convertUSD2CNY(calcCostPerUnit(resultValues.landShippingFee)),
     },
     {
       key: '2',
       feeName: '海运费',
-      fee: resultValues.oceanShippingFee,
-      costPerUnit: calcCostPerUnit(resultValues.oceanShippingFee),
-      costPerUnitInCNY: convertUSD2CNY(calcCostPerUnit(resultValues.oceanShippingFee)),
+      fee: `$${bigDecimal.round(resultValues.oceanShippingFee, 2)}`,
+      costPerUnit: `$${bigDecimal.round(calcCostPerUnit(resultValues.oceanShippingFee), 2)}`
+      // costPerUnitInCNY: convertUSD2CNY(calcCostPerUnit(resultValues.oceanShippingFee)),
     },
     {
       key: '3',
       feeName: '关税',
-      fee: resultValues.duty,
-      costPerUnit: calcCostPerUnit(resultValues.duty),
-      costPerUnitInCNY: convertUSD2CNY(calcCostPerUnit(resultValues.duty)),
+      fee: `$${bigDecimal.round(resultValues.duty, 2)}`,
+      costPerUnit: `$${bigDecimal.round(calcCostPerUnit(resultValues.duty), 2)}`
+      // costPerUnitInCNY: convertUSD2CNY(calcCostPerUnit(resultValues.duty)),
     },
     {
       key: '4',
       feeName: '目的港',
-      fee: resultValues.destinationPortFee,
-      costPerUnit: calcCostPerUnit(resultValues.destinationPortFee),
-      costPerUnitInCNY: convertUSD2CNY(calcCostPerUnit(resultValues.destinationPortFee)),
+      fee: `$${bigDecimal.round(resultValues.destinationPortFee, 2)}`,
+      costPerUnit: `$${bigDecimal.round(calcCostPerUnit(resultValues.destinationPortFee), 2)}`,
+      // costPerUnitInCNY: convertUSD2CNY(calcCostPerUnit(resultValues.destinationPortFee)),
     }
   ];
 
@@ -93,7 +95,7 @@ const LdpResultTable = ({resultValues} : Props) => {
       ...tableData,
       fee: bigDecimal.round(tableData.fee, 2),
       costPerUnit: bigDecimal.round(tableData.costPerUnit, 2),
-      costPerUnitInCNY: bigDecimal.round(tableData.costPerUnitInCNY, 2)
+      // costPerUnitInCNY: bigDecimal.round(tableData.costPerUnitInCNY, 2)
     };
   }
 
@@ -101,38 +103,10 @@ const LdpResultTable = ({resultValues} : Props) => {
     <>
       <Table
         columns={columns}
-        dataSource={tableData.map(formatter)}
+        dataSource={tableData}
         pagination={false}
         bordered
         size="small"
-        summary={pageData => {
-          let totalFee = '0';
-          let totalCostPerUnit = '0';
-          let totalCostPerUnitCNY = '0';
-
-          pageData.forEach(({ fee, costPerUnit, costPerUnitInCNY }) => {
-            totalFee = bigDecimal.add(fee, totalFee);
-            totalCostPerUnit = bigDecimal.add(costPerUnit, totalCostPerUnit);
-            totalCostPerUnitCNY = bigDecimal.add(costPerUnitInCNY, totalCostPerUnitCNY);
-          });
-
-          return (
-            <>
-              <Table.Summary.Row>
-                <Table.Summary.Cell index={0}>合计</Table.Summary.Cell>
-                <Table.Summary.Cell index={1}>
-                  <Text >{`$${totalFee}`}</Text>
-                </Table.Summary.Cell>
-                <Table.Summary.Cell index={2}>
-                  <Text>{`$${totalCostPerUnit}`}</Text>
-                </Table.Summary.Cell>
-                <Table.Summary.Cell index={3}>
-                  <Text>{`¥${totalCostPerUnitCNY}`}</Text>
-                </Table.Summary.Cell>
-              </Table.Summary.Row>
-            </>
-          );
-        }}
       />
     </>
   );

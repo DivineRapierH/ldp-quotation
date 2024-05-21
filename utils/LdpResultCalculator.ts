@@ -52,7 +52,7 @@ function calcContainerNumAndRemainingVolume(totalUnitsVolume: string)
       totalUnitsVolume,
       halfOfContainerNum.multiply(doubledVolumePerContainer).getValue())
   );
-  console.log('剩余体积 ' + volumeRemaining.getValue())
+  // console.log('剩余体积 ' + volumeRemaining.getValue())
   // 剩余体积 ≥ 100 则再加 2 个整柜
   // 65 < 剩余体积 ≤ 99 则再加 1 个整柜，剩余作为散货
   // 50 ≤ 剩余体积 ≤ 65 则再加 1 个整柜
@@ -74,8 +74,8 @@ function calcContainerNumAndRemainingVolume(totalUnitsVolume: string)
     volumeWithoutContainer = volumeRemaining.getValue();
   }
   const containerNum: string = halfOfContainerNum.multiply(new bigDecimal(2)).add(extraContainerNum).getValue();
-  console.log('柜数' + containerNum);
-  console.log('散货体积' + volumeWithoutContainer);
+  // console.log('柜数' + containerNum);
+  // console.log('散货体积' + volumeWithoutContainer);
 
   return {containerNum, volumeWithoutContainer};
 }

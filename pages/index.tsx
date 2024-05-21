@@ -159,7 +159,7 @@ const Home: NextPage = () => {
   ];
 
   const onFinish = (values: LdpFormResult) => {
-    console.log(values)
+    // console.log(values)
     const boxVolume = bigDecimal.divide(
       bigDecimal.multiply(bigDecimal.multiply(values.length, values.width), values.height),
       1000000,
@@ -177,7 +177,8 @@ const Home: NextPage = () => {
       containerNum
     } = calcLdp({
       quantity: values.quantity,
-      exchangeRate: values.exchangeRate,
+      // Hard code exchange rate to 7, since it's not needed now.
+      exchangeRate: '7',
       clearancePrice: values.clearancePrice,
       taxRate: values.taxRate,
       trucking: truckingOptions.filter(opt => opt.name === values.trucking)[0].trucking,
@@ -203,7 +204,8 @@ const Home: NextPage = () => {
       duty: duty,
       destinationPortFee: destinationPortFee,
       quantity: values.quantity,
-      exchangeRate: values.exchangeRate,
+      // Hard code exchange rate to 7, since it's not needed now.
+      exchangeRate: '7',
     }, () => setIsResultCalculated(true, () => setInfoCardLoading(false)));
   };
 
@@ -212,6 +214,9 @@ const Home: NextPage = () => {
       return
     }
   };
+
+  const boxVolume = new bigDecimal(cardValue.length).multiply(new bigDecimal(cardValue.width)).multiply(new bigDecimal(cardValue.height)).divide(new bigDecimal('1000000'), 4);
+  const itemVolume = boxVolume.divide(new bigDecimal(cardValue.numPerBox), 4);
 
   return (
     <div className={styles.container}>
@@ -234,10 +239,11 @@ const Home: NextPage = () => {
           <>
             <Divider/>
             <Row gutter={24}>
-              <Col span={8}>
+              <Col span={12}>
                 <Card title={cardValue.productName} loading={isInfoCardLoading}>
                   <p>{cardValue.numPerBox}件装</p>
                   <p>纸箱尺寸 {cardValue.length}cm * {cardValue.width}cm * {cardValue.height}cm</p>
+                  <p>纸箱体积 {boxVolume.getValue()}立方米，单件体积 {itemVolume.getValue()}立方米</p>
                   <p>预估总体积 {bigDecimal.round(cardValue.totalVolume, 2)}立方米</p>
                   <p>散货体积 {bigDecimal.round(cardValue.volumeWithoutContainer, 2)}立方米，整柜数量 {cardValue.containerNum}个</p>
                   {bigDecimal.compareTo(cardValue.volumeWithoutContainer, '0') > 0 &&
@@ -245,7 +251,7 @@ const Home: NextPage = () => {
                   }
                 </Card>
               </Col>
-              <Col span={16}>
+              <Col span={12}>
                 <LdpResultTable
                   resultValues={formValue}
                 />

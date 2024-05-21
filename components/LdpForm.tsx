@@ -51,7 +51,22 @@ export default function LdpForm(
       form={form}
       name="advanced_search"
       className="ant-advanced-search-form"
+      initialValues={
+        {
+          warehouse: 'LA',
+          estimatedFeePerUnit: '100',
+          estimatedFeePerContainer: '6000'
+        }
+      }
       onValuesChange={(changedValues, allValues) => {
+        // console.log({changedValues, allValues})
+        if (changedValues.warehouse) {
+          if (changedValues.warehouse === 'LA') {
+            form.setFieldsValue({estimatedFeePerUnit: '100', estimatedFeePerContainer: '6000'})
+          } else if (changedValues.warehouse === 'NY') {
+            form.setFieldsValue({estimatedFeePerUnit: '120', estimatedFeePerContainer: '7000'})
+          }
+        }
         onFormUnsavedChange()
       }}
       onFinish={values => {
@@ -91,25 +106,25 @@ export default function LdpForm(
             <Input placeholder="单票或单柜件数" type="number"/>
           </Form.Item>
         </Col>
-        <Col span={8} key="exchangeRate">
-          <Form.Item
-            name="exchangeRate"
-            label="汇率"
-            tooltip="1美元兑人民币"
-            rules={[
-              {
-                required: true,
-                message: '请输入汇率!',
-              },
-              {
-                pattern: /^[0-9]+(.[0-9]+)?$/,
-                message: '请输入正确的汇率！',
-              }
-            ]}
-          >
-            <Input type="number" step=".01"/>
-          </Form.Item>
-        </Col>
+        {/*<Col span={8} key="exchangeRate">*/}
+        {/*  <Form.Item*/}
+        {/*    name="exchangeRate"*/}
+        {/*    label="汇率"*/}
+        {/*    tooltip="1美元兑人民币"*/}
+        {/*    rules={[*/}
+        {/*      {*/}
+        {/*        required: true,*/}
+        {/*        message: '请输入汇率!',*/}
+        {/*      },*/}
+        {/*      {*/}
+        {/*        pattern: /^[0-9]+(.[0-9]+)?$/,*/}
+        {/*        message: '请输入正确的汇率！',*/}
+        {/*      }*/}
+        {/*    ]}*/}
+        {/*  >*/}
+        {/*    <Input type="number" step=".01"/>*/}
+        {/*  </Form.Item>*/}
+        {/*</Col>*/}
       </Row>
       <Row gutter={24}>
         <Col span={8} key="clearancePrice">
@@ -185,8 +200,8 @@ export default function LdpForm(
           >
             <Select
               options={[
-                { value: 'LA', label: 'LA' },
-                { value: 'NY', label: 'NY' },
+                {value: 'LA', label: 'LA'},
+                {value: 'NY', label: 'NY'},
               ]}
             />
           </Form.Item>
@@ -284,8 +299,9 @@ export default function LdpForm(
                 message: '请输入正确的价格！',
               }
             ]}
+            tooltip="代表现在报价基于的运价，更新于 24/5/21"
           >
-            <Input type="number" step=".01" prefix="$"/>
+            <Input type="number" step=".01" prefix="$" disabled={true}/>
           </Form.Item>
         </Col>
         <Col span={8} key="estimatedFeePerContainer">
@@ -302,8 +318,9 @@ export default function LdpForm(
                 message: '请输入正确的价格！',
               }
             ]}
+            tooltip="代表现在报价基于的运价，更新于 24/5/21"
           >
-            <Input type="number" step=".01" prefix="$"/>
+            <Input type="number" step=".01" prefix="$" disabled={true}/>
           </Form.Item>
         </Col>
       </Row>
