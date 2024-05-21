@@ -216,7 +216,7 @@ const Home: NextPage = () => {
   };
 
   const boxVolume = new bigDecimal(cardValue.length).multiply(new bigDecimal(cardValue.width)).multiply(new bigDecimal(cardValue.height)).divide(new bigDecimal('1000000'), 4);
-  const itemVolume = boxVolume.divide(new bigDecimal(cardValue.numPerBox), 4);
+  const itemVolume = cardValue.numPerBox && cardValue.numPerBox !== '' && cardValue.numPerBox !== '0' ? boxVolume.divide(new bigDecimal(cardValue.numPerBox), 4) : new bigDecimal('0');
 
   return (
     <div className={styles.container}>
