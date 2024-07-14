@@ -54,17 +54,17 @@ export default function LdpForm(
       initialValues={
         {
           warehouse: 'LA',
-          estimatedFeePerUnit: '100',
-          estimatedFeePerContainer: '6000'
+          estimatedFeePerUnit: '120',
+          estimatedFeePerContainer: '6700'
         }
       }
       onValuesChange={(changedValues, allValues) => {
         // console.log({changedValues, allValues})
         if (changedValues.warehouse) {
           if (changedValues.warehouse === 'LA') {
-            form.setFieldsValue({estimatedFeePerUnit: '100', estimatedFeePerContainer: '6000'})
+            form.setFieldsValue({estimatedFeePerUnit: '120', estimatedFeePerContainer: '6700'})
           } else if (changedValues.warehouse === 'NY') {
-            form.setFieldsValue({estimatedFeePerUnit: '120', estimatedFeePerContainer: '7000'})
+            form.setFieldsValue({estimatedFeePerUnit: '140', estimatedFeePerContainer: '7800'})
           }
         }
         onFormUnsavedChange()
