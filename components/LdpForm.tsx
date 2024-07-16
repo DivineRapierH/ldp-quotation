@@ -36,6 +36,11 @@ export default function LdpForm(
 
   const [form] = Form.useForm();
 
+	const estimatedFeePerUnitLA = '140'
+	const estimatedFeePerContainerLA = '8000'
+	const estimatedFeePerUnitNY = '175'
+	const estimatedFeePerContainerNY = '10600'
+
   // not used
   const currencySelector = (
     <Form.Item name="currencySelector" noStyle>
@@ -54,17 +59,17 @@ export default function LdpForm(
       initialValues={
         {
           warehouse: 'LA',
-          estimatedFeePerUnit: '120',
-          estimatedFeePerContainer: '6700'
+          estimatedFeePerUnit: estimatedFeePerUnitLA,
+          estimatedFeePerContainer: estimatedFeePerContainerLA
         }
       }
       onValuesChange={(changedValues, allValues) => {
         // console.log({changedValues, allValues})
         if (changedValues.warehouse) {
           if (changedValues.warehouse === 'LA') {
-            form.setFieldsValue({estimatedFeePerUnit: '120', estimatedFeePerContainer: '6700'})
+            form.setFieldsValue({estimatedFeePerUnit: estimatedFeePerUnitLA, estimatedFeePerContainer: estimatedFeePerContainerLA})
           } else if (changedValues.warehouse === 'NY') {
-            form.setFieldsValue({estimatedFeePerUnit: '140', estimatedFeePerContainer: '7800'})
+            form.setFieldsValue({estimatedFeePerUnit: estimatedFeePerUnitNY, estimatedFeePerContainer: estimatedFeePerContainerNY})
           }
         }
         onFormUnsavedChange()
@@ -299,7 +304,7 @@ export default function LdpForm(
                 message: '请输入正确的价格！',
               }
             ]}
-            tooltip="代表现在报价基于的运价，更新于 24/5/21"
+            tooltip="代表现在报价基于的运价，更新于 24/7/16"
           >
             <Input type="number" step=".01" prefix="$" disabled={true}/>
           </Form.Item>
